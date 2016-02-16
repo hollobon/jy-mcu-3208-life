@@ -31,7 +31,7 @@
 #define KEY_LEFT 0
 #define KEY_MIDDLE 1
 #define KEY_RIGHT 2
- 
+
 uint8_t EEMEM seed_address[32];
 
 void initialise(void)
@@ -128,10 +128,15 @@ uint8_t count(uint8_t x, uint8_t y)
             + ((leds[(x - 1) & 0x1f] & (1 << ((y + 1) & 7))) ? 1 : 0));
 }
 
+#define MIN_INTERVAL 50
+#define MAX_INTERVAL 1000
+#define INTERVAL_INCREMENT 50
+
 int main(void)
 {
     message_t message;
     uint8_t next_grid[32];
+    uint16_t interval = 150;
 
     initialise();
     set_up_timers();
@@ -141,13 +146,14 @@ int main(void)
     eeprom_read_block(leds, &seed_address, 32);
     memset(leds, 0, 32);
     //leds[3] = 8; leds[4] = 4; leds[5] = 28;
-    leds[3] = 0xa << 2; leds[4] = 0x1 << 2; leds[5] = 0x1 << 2; leds[6] = 0x9 << 2; leds[7] = 0x7 << 2; 
+    leds[3] = 0xa << 2; leds[4] = 0x1 << 2; leds[5] = 0x1 << 2; leds[6] = 0x9 << 2; leds[7] = 0x7 << 2;
     HTsendscreen();
-    
-    set_timer(150, 0, true);
+
+    set_timer(interval, 0, true);
     while (1) {
         if (mq_get(&message)) {
-            if (msg_get_event(message) == M_TIMER) {
+            switch (msg_get_event(message)) {
+            case M_TIMER:
                 memset(next_grid, 0, 32);
                 for (uint8_t x = 0; x < 32; x++) {
                     for (uint8_t y = 0; y < 8; y++) {
@@ -160,6 +166,25 @@ int main(void)
                 }
                 memcpy(leds, next_grid, 32);
                 HTsendscreen();
+                break;
+
+            case M_KEY_DOWN:
+                switch (msg_get_param(message)) {
+                case KEY_LEFT:
+                    if (interval > MIN_INTERVAL) {
+                        interval -= INTERVAL_INCREMENT;
+                        set_timer(interval, 0, true);
+                    }
+                    break;
+
+                case KEY_RIGHT:
+                    if (interval < MAX_INTERVAL) {
+                        interval += INTERVAL_INCREMENT;
+                        set_timer(interval, 0, true);
+                    }
+                    break;
+                }
+                break;
             }
         }
     }
