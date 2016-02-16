@@ -1,0 +1,20 @@
+# GNU GLOBAL
+
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+
+# Emacs
+*~
+\#*#
+
+# build
+*\.sym
+*\.hex
+*\.elf
+*\.eep
+*\.lss
+*\.map
+/obj_life
+/.dep
