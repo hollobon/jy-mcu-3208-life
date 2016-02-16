@@ -1,4 +1,4 @@
-/* Conway's Game of Life for JY-MCY 3208 "Lattice Clock"
+/* Conway's Game of Life for JY-MCU 3208 "Lattice Clock"
  * 
  * Copyright (C) Pete Hollobon 2016
  */
