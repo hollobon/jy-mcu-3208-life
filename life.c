@@ -131,9 +131,8 @@ uint8_t count(uint8_t x, uint8_t y)
 void write_offset(character c, uint8_t line, uint8_t offset)
 {
     uint8_t *p = leds + line + c.columns;
-    int8_t n = c.columns - 1;
-    while (n >= 0)
-        *p-- = c.bitmap[n--] << offset;
+    for (int8_t n = c.columns - 1; n >= 0; n--)
+        *p-- = c.bitmap[n] << offset;
 }
 
 #define MIN_INTERVAL 50
