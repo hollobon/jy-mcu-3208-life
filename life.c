@@ -171,6 +171,7 @@ int main(void)
                 break;
 
             case M_KEY_DOWN:
+            case M_KEY_REPEAT:
                 switch (msg_get_param(message)) {
                 case KEY_LEFT:
                     if (interval > MIN_INTERVAL) {
