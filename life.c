@@ -128,6 +128,14 @@ uint8_t count(uint8_t x, uint8_t y)
             + ((leds[(x - 1) & 0x1f] & (1 << ((y + 1) & 7))) ? 1 : 0));
 }
 
+void write_offset(character c, uint8_t line, uint8_t offset)
+{
+    uint8_t *p = leds + line + c.columns;
+    int8_t n = c.columns - 1;
+    while (n >= 0)
+        *p-- = c.bitmap[n--] << offset;
+}
+
 #define MIN_INTERVAL 50
 #define MAX_INTERVAL 1000
 #define INTERVAL_INCREMENT 50
@@ -137,19 +145,14 @@ int main(void)
     message_t message;
     uint8_t next_grid[32];
     uint16_t interval = 150;
+    uint8_t current_pattern = 0;
 
     initialise();
     set_up_timers();
     init_timers();
     HTbrightness(1);
 
-    eeprom_read_block(leds, &seed_address, 32);
-    memset(leds, 0, 32);
-    //leds[3] = 8; leds[4] = 4; leds[5] = 28;
-    leds[3] = 0xa << 2; leds[4] = 0x1 << 2; leds[5] = 0x1 << 2; leds[6] = 0x9 << 2; leds[7] = 0x7 << 2;
-    HTsendscreen();
-
-    set_timer(interval, 0, true);
+    goto init;
     while (1) {
         if (mq_get(&message)) {
             switch (msg_get_event(message)) {
@@ -182,6 +185,15 @@ int main(void)
                         interval += INTERVAL_INCREMENT;
                         set_timer(interval, 0, true);
                     }
+                    break;
+
+                case KEY_MIDDLE:
+                    current_pattern = (current_pattern + 1) % (sizeof(patterns) / sizeof(character));
+                init:
+                    memset(leds, 0, 32);
+                    write_offset(patterns[current_pattern], 10, 2);
+                    HTsendscreen();
+                    set_timer(interval, 0, true);
                     break;
                 }
                 break;
