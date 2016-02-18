@@ -6,12 +6,9 @@
 #include <avr/eeprom.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
-#include <util/atomic.h>
 #include <util/delay.h>
 
 #include <stdint.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -20,20 +17,6 @@
 #include "life.h"
 #include "timers.h"
 #include "io.h"
-
-#define M_KEY_DOWN 8
-#define M_KEY_UP 9
-#define M_KEY_REPEAT 10
-#define M_FADE_COMPLETE 11
-
-#define DEBOUNCE_TIME 10
-
-#define key_down(n) ((PIND & (1 << ((n) + 5))) == 0)
-#define KEY_LEFT 0
-#define KEY_MIDDLE 1
-#define KEY_RIGHT 2
-
-uint8_t EEMEM seed_address[32];
 
 void initialise(void)
 {
