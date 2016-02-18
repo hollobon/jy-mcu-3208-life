@@ -63,9 +63,6 @@ void set_up_timers(void)
     // Set interrupt on compare match
     TIMSK = (1 << TICIE1);
 
-    // timer 2: CTC, OCR2 as TOP, clock / 64
-    //    TCCR2 |= _BV(WGM21) | _BV(CS22);
-
     sei();
 }
 
