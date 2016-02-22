@@ -22,14 +22,7 @@ void initialise(void)
 {
     HTpinsetup();
     HTsetup();
-
-    /* Set high 3 bits of port D as input */
-    DDRD &= 0b00011111;
-
-    /* Turn on pull-up resistors on high 3 bits */
-    PORTD |= 0b11100000;
-
-    DDRC |= 1 << 5;
+    init_keys();
 }
 
 void set_up_timers(void)
